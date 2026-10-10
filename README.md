@@ -37,13 +37,7 @@ The frontend needs no changes: it already sends `/api` requests to port
    uvicorn balancer:app --host 127.0.0.1 --port 8000
    ```
 
-   ```powershell
-   # Windows PowerShell
-   $env:LB_BACKENDS="a=http://127.0.0.1:8001,b=http://127.0.0.1:8002"
-   uvicorn balancer:app --host 127.0.0.1 --port 8000
-   ```
-
-   These two backends are also the default, so `LB_BACKENDS` can be left
+    These two backends are also the default, so `LB_BACKENDS` can be left
    out when they run on ports 8001 and 8002. Run the load balancer as a
    **single process**: don't add `--workers`, because the routing state is
    kept in memory. One process handles many users at once, since it only
@@ -102,20 +96,6 @@ All settings are environment variables.
 | `LB_HEALTH_PATH` | `/` | Path checked on each backend; must answer 200 |
 | `LB_TIMEOUT` | `180` | Seconds to wait for a backend's answer |
 | `LB_MAX_BODY_MB` | `110` | Largest upload accepted, in MB |
-
-### Who can switch backends
-
-Without `LB_ADMIN_TOKEN`, only requests from the computer the load balancer
-runs on may use the control page and the `/lb/` admin API. The frontend's
-development server runs on that same computer, so its users count as local.
-**If other people use the app, set a token**:
-
-```bash
-LB_ADMIN_TOKEN="choose-a-long-random-value" uvicorn balancer:app --port 8000
-```
-
-The control page then asks for the token. The command line sends it as a
-header: `curl -H "X-Admin-Token: choose-a-long-random-value" ...`.
 
 ## How it works
 
