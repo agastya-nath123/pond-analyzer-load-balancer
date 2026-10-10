@@ -97,6 +97,20 @@ All settings are environment variables.
 | `LB_TIMEOUT` | `180` | Seconds to wait for a backend's answer |
 | `LB_MAX_BODY_MB` | `110` | Largest upload accepted, in MB |
 
+### Who can switch backends
+
+Without `LB_ADMIN_TOKEN`, only requests from the computer the load balancer
+runs on may use the control page and the `/lb/` admin API. The frontend's
+development server runs on that same computer, so its users count as local.
+**If other people use the app, set a token**:
+
+```bash
+LB_ADMIN_TOKEN="choose-a-long-random-value" uvicorn balancer:app --port 8000
+```
+
+The control page then asks for the token. The command line sends it as a
+header: `curl -H "X-Admin-Token: choose-a-long-random-value" ...`.
+
 ## How it works
 
 - **Health checks:** every backend gets `GET /` every few seconds. After two
